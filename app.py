@@ -27,7 +27,7 @@ st.set_page_config(
 )
 
 # API configuration
-default_api_url = os.getenv("API_BASE_URL", "http://localhost:8000")
+default_api_url = os.getenv("API_BASE_URL", "https://niro-chat-backend.onrender.com")
 API_BASE_URL = st.sidebar.text_input(
     "API Base URL",
     value=default_api_url,
