@@ -34,6 +34,15 @@ API_BASE_URL = st.sidebar.text_input(
     help="Backend API URL"
 )
 
+# Timeout configuration
+API_TIMEOUT = st.sidebar.slider(
+    "API Timeout (seconds)",
+    min_value=10,
+    max_value=300,
+    value=int(os.getenv("API_TIMEOUT", "60")),
+    help="Maximum time to wait for API response"
+)
+
 # Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -47,10 +56,13 @@ def call_api(question: str) -> dict:
         response = requests.post(
             f"{API_BASE_URL}/ask",
             json={"question": question},
-            timeout=30
+            timeout=API_TIMEOUT
         )
         response.raise_for_status()
         return response.json()
+    except requests.exceptions.Timeout:
+        st.error(f"⏱️ API Timeout: Request took longer than {API_TIMEOUT} seconds. Try increasing the timeout in the sidebar.")
+        return None
     except requests.exceptions.RequestException as e:
         st.error(f"API Error: {str(e)}")
         return None
